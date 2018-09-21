@@ -4,33 +4,31 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Robot;
-import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author Michael
+ * @author Michael Arp
  */
 public class Main extends Application
 {
@@ -122,7 +120,7 @@ public class Main extends Application
                 Stage ErrorStage = new Stage();
                 HBox inside = new HBox();
                 Scene ErrorScene = new Scene(inside,menuSize,menuSizeTwo);
-                Text error = new Text("The Bot Is A N G E R");
+                Text error = new Text("Oh dear, the bot has become angry. Send the log (it's in a folder called Glacier Nester on your main drive) to GlacierNester@gmail.com");
                 inside.getChildren().add(error);
                 ErrorStage.setScene(ErrorScene);
                 ErrorStage.show();
@@ -197,7 +195,29 @@ public class Main extends Application
 		}
     	
     }
-    public static void main(String[] args) {
-        launch(args);
+    public static void main(String[] args) throws IOException {
+    	File logFolder = new File("C:\\Glacier Nester\\logs");
+    	File file = null;
+    	if(!logFolder.exists())
+    	{
+    		logFolder.setWritable(true);
+    		if(logFolder.mkdirs())
+    		{
+    			file = new File("C:\\Glacier Nester\\logs\\err.log");
+    		}
+    		else
+    		{
+    			System.out.println("Log creation error");
+    		}
+    	}
+    	else
+    	{
+    		file = new File("C:\\Glacier Nester\\logs\\err.log");
+    	}
+    	FileOutputStream fos = new FileOutputStream(file);
+		PrintStream ps = new PrintStream(fos);
+		System.setErr(ps);
+		System.err.println("Started program at " + DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
+    	launch(args);
     }
 }
