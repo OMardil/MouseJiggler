@@ -13,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.VBox;
@@ -34,26 +36,41 @@ public class Main extends Application
     int menuSizeTwo = 60;
     int minimumSeconds = 0;
     int maximumSeconds = 60;
-    int stepBy = 1;
-    Spinner<Integer> seconds = new Spinner<Integer>(minimumSeconds,maximumSeconds,0,stepBy);
+    int minimumMinutes = 0;
+    int maximumMinutes = 60;
+    int minimumHours = 0;
+    int maximumHours = 24;
+    Spinner<Integer> seconds = new Spinner<Integer>(minimumSeconds,maximumSeconds,0,1);
+    Spinner<Integer> minutes = new Spinner<Integer>(minimumMinutes,maximumMinutes,0,1);
+    Spinner<Integer> hours = new Spinner<Integer>(minimumHours,maximumHours,0,1);
     int delayamount = 1000;//how many ms between iterations?
     @Override
     public void start(Stage primaryStage)
     {
-    	seconds.setEditable(false);
+    	setupSpinners();
         VBox holder = new VBox();
         HBox inVBox = new HBox();
         Text message = new Text("You're inputting how many seconds to jiggle");
         Button btJiggle = new Button("Jiggle the mouse pls");//button to jiggle the mouse
         btJiggle.setOnAction(new jigglehandler());//wire the button to jiggle the mouse
         inVBox.getChildren().add(seconds);
-        inVBox.getChildren().add(btJiggle);//put the button and text field next to each other
+        inVBox.getChildren().add(minutes);
+        inVBox.getChildren().add(hours);
+        inVBox.getChildren().add(btJiggle);//put the button and spinners next to each other
         holder.getChildren().add(message);
         holder.getChildren().add(inVBox);//then put the text and the group from earlier in the window
         Scene primscene = new Scene(holder,menuSize,menuSizeTwo);
         primaryStage.setScene(primscene);//make the scene with all the stuff in it and set it to the main window
         primaryStage.show();//show the main window
     }
+	private void setupSpinners() {
+    	seconds.setEditable(false);
+    	minutes.setEditable(false);
+    	hours.setEditable(false);
+    	seconds.valueProperty().addListener(new secondsIncrementHandler());
+    	minutes.valueProperty().addListener(new minutesIncrementHandler());
+    	hours.valueProperty().addListener(new hoursIncrementHandler());
+	}
     class jigglehandler implements EventHandler<ActionEvent>
     {
 
@@ -112,6 +129,49 @@ public class Main extends Application
 			return seconds.getValue();
 		}
     
+    }
+    class secondsIncrementHandler implements ChangeListener<Integer>
+    {
+
+		@Override
+		public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+			if(oldValue == maximumSeconds-1 && newValue == maximumSeconds)
+			{
+				minutes.increment(1);
+				seconds.getValueFactory().setValue(minimumSeconds);
+				//if they max out seconds, increment minutes, reset seconds
+			}
+		}
+    	
+    }
+    class minutesIncrementHandler implements ChangeListener<Integer>
+    {
+
+		@Override
+		public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+			if(oldValue == maximumMinutes-1 && newValue == maximumMinutes)
+			{
+				hours.increment(1);
+				minutes.getValueFactory().setValue(minimumMinutes);
+				//if they max out minutes, increment hours, reset minutes
+			}
+		}
+    	
+    }
+    class hoursIncrementHandler implements ChangeListener<Integer>
+    {
+
+		@Override
+		public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+			if(oldValue == maximumHours-1 && newValue == maximumHours)
+			{
+				seconds.getValueFactory().setValue(minimumSeconds);
+				minutes.getValueFactory().setValue(minimumMinutes);
+				hours.getValueFactory().setValue(minimumHours);
+				//if they max out hours, it resets the whole schpiel
+			}
+		}
+    	
     }
     public void typeThings(String phrase) 
     {
