@@ -117,10 +117,12 @@ public class Main extends Application
                 }
             }
             catch (AWTException ex) {
-                Stage ErrorStage = new Stage();
+            	System.err.println("AWT Exception from the jigglehandler at " + DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss").format(LocalDateTime.now()));
+                ex.printStackTrace();
+            	Stage ErrorStage = new Stage();
                 HBox inside = new HBox();
                 Scene ErrorScene = new Scene(inside,menuSize,menuSizeTwo);
-                Text error = new Text("Oh dear, the bot has become angry. Send the log (it's in a folder called Glacier Nester on your main drive) to GlacierNester@gmail.com");
+                Text error = new Text("Oh dear, the bot has become angry.\n There's a log, in a logs folder.\nIt's in a folder called Glacier Nester, on your main drive.\n Send it to GlacierNester@gmail.com");
                 inside.getChildren().add(error);
                 ErrorStage.setScene(ErrorScene);
                 ErrorStage.show();
@@ -205,10 +207,6 @@ public class Main extends Application
     		{
     			file = new File("C:\\Glacier Nester\\logs\\err.log");
     		}
-    		else
-    		{
-    			System.out.println("Log creation error");
-    		}
     	}
     	else
     	{
@@ -217,7 +215,7 @@ public class Main extends Application
     	FileOutputStream fos = new FileOutputStream(file);
 		PrintStream ps = new PrintStream(fos);
 		System.setErr(ps);
-		System.err.println("Started program at " + DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
+		System.err.println("Started MouseJiggler at " + DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss").format(LocalDateTime.now()));
     	launch(args);
     }
 }
