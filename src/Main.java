@@ -78,9 +78,12 @@ public class Main extends Application
     	seconds.setEditable(false);
     	minutes.setEditable(false);
     	hours.setEditable(false);
+    	seconds.getValueFactory().setWrapAround(true);
+    	minutes.getValueFactory().setWrapAround(true);
+    	//hours doesn't wraparound because we don't want to set hours to 24 by lowering minutes without there being an hour in there
     	seconds.valueProperty().addListener(new secondsIncrementHandler());
-    	minutes.valueProperty().addListener(new minutesIncrementHandler());
-    	hours.valueProperty().addListener(new hoursIncrementHandler());
+    	minutes.valueProperty().addListener(new minutesChangeHandler());
+    	hours.valueProperty().addListener(new hoursChangeHandler());
 	}
     class jigglehandler implements EventHandler<ActionEvent>
     {
@@ -143,13 +146,19 @@ public class Main extends Application
 			if(oldValue == maximumSeconds-1 && newValue == maximumSeconds)
 			{
 				minutes.increment(1);
-				seconds.getValueFactory().setValue(minimumSeconds);
-				//if they max out seconds, increment minutes, reset seconds
+				//if they max out seconds, increment minutes
+				//originally we were resetting the seconds manually here
+				//but setting the wraparound property to true does that for us
 			}
+			if(oldValue == minimumSeconds+1 && newValue == minimumSeconds)
+			{
+				minutes.decrement(1);
+			}
+			//essentially, if they max out seconds, increase the minutes, but if they zero out seconds, decrement minute
 		}
     	
     }
-    class minutesIncrementHandler implements ChangeListener<Integer>
+    class minutesChangeHandler implements ChangeListener<Integer>
     {
 
 		@Override
@@ -157,13 +166,23 @@ public class Main extends Application
 			if(oldValue == maximumMinutes-1 && newValue == maximumMinutes)
 			{
 				hours.increment(1);
-				minutes.getValueFactory().setValue(minimumMinutes);
-				//if they max out minutes, increment hours, reset minutes
+				//originally we were setting the values manually here
+				//but setting the wraparound property to true does that for us
+			}
+			if(oldValue == minimumMinutes+1 && newValue == minimumMinutes)
+			{
+				hours.decrement(1);
+			}
+			//essentially, if they max out minutes, increase the hours, but if they zero out minutes, decrement hour
+			if(oldValue == minimumMinutes && newValue == maximumMinutes)
+			{
+				minutes.getValueFactory().setValue(0);
+				//we deal with minute underflow manually though because wraparound is needed in the minutes spinner
 			}
 		}
     	
     }
-    class hoursIncrementHandler implements ChangeListener<Integer>
+    class hoursChangeHandler implements ChangeListener<Integer>
     {
 
 		@Override
