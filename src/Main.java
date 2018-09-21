@@ -6,6 +6,7 @@ import java.awt.PointerInfo;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Spinner;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.Scene;
@@ -31,17 +32,21 @@ public class Main extends Application
 {
     int menuSize = 375;
     int menuSizeTwo = 60;
-    TextField howlong = new TextField();//how long are we jiggling the mouse for?
+    int minimumSeconds = 0;
+    int maximumSeconds = 60;
+    int stepBy = 1;
+    Spinner<Integer> seconds = new Spinner<Integer>(minimumSeconds,maximumSeconds,0,stepBy);
     int delayamount = 1000;//how many ms between iterations?
     @Override
     public void start(Stage primaryStage)
     {
+    	seconds.setEditable(false);
         VBox holder = new VBox();
         HBox inVBox = new HBox();
         Text message = new Text("You're inputting how many seconds to jiggle");
         Button btJiggle = new Button("Jiggle the mouse pls");//button to jiggle the mouse
         btJiggle.setOnAction(new jigglehandler());//wire the button to jiggle the mouse
-        inVBox.getChildren().add(howlong);
+        inVBox.getChildren().add(seconds);
         inVBox.getChildren().add(btJiggle);//put the button and text field next to each other
         holder.getChildren().add(message);
         holder.getChildren().add(inVBox);//then put the text and the group from earlier in the window
@@ -62,7 +67,7 @@ public class Main extends Application
                 int x = (int) b.getX();
                 int y = (int) b.getY();
                 Robot bot = new Robot();
-                howlongnum = Integer.parseInt(howlong.getText());
+                howlongnum = parseInput();
                 bot.setAutoWaitForIdle(true);
                 for(int i = 0; i<howlongnum;i++)
                 {
@@ -102,6 +107,10 @@ public class Main extends Application
                 ErrorStage.show();
             }
         }
+
+		private Integer parseInput() {
+			return seconds.getValue();
+		}
     
     }
     public void typeThings(String phrase) 
