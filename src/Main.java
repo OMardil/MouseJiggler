@@ -17,6 +17,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
 
@@ -32,8 +34,8 @@ import javafx.scene.layout.VBox;
  */
 public class Main extends Application
 {
-    int menuSize = 375;
-    int menuSizeTwo = 60;
+    int menuSize = 425;
+    int menuSizeTwo = 135;
     int minimumSeconds = 0;
     int maximumSeconds = 60;
     int minimumMinutes = 0;
@@ -48,17 +50,26 @@ public class Main extends Application
     public void start(Stage primaryStage)
     {
     	setupSpinners();
-        VBox holder = new VBox();
-        HBox inVBox = new HBox();
-        Text message = new Text("You're inputting how many seconds to jiggle");
+        HBox holder = new HBox();
+        HBox labeledSpinners = new HBox();
+        VBox spinners = new VBox();
+        VBox labels = new VBox();
         Button btJiggle = new Button("Jiggle the mouse pls");//button to jiggle the mouse
         btJiggle.setOnAction(new jigglehandler());//wire the button to jiggle the mouse
-        inVBox.getChildren().add(seconds);
-        inVBox.getChildren().add(minutes);
-        inVBox.getChildren().add(hours);
-        inVBox.getChildren().add(btJiggle);//put the button and spinners next to each other
-        holder.getChildren().add(message);
-        holder.getChildren().add(inVBox);//then put the text and the group from earlier in the window
+        btJiggle.setAlignment(Pos.CENTER);
+        spinners.getChildren().add(seconds);
+        spinners.getChildren().add(minutes);
+        spinners.getChildren().add(hours);
+        labels.getChildren().add(new Text("Seconds:"));
+        labels.getChildren().add(new Text("Minutes:"));
+        labels.getChildren().add(new Text("Hours: "));
+        labeledSpinners.getChildren().add(labels);
+        labeledSpinners.getChildren().add(spinners);
+        holder.getChildren().add(labeledSpinners);
+        holder.getChildren().add(btJiggle);
+        labels.setSpacing(10);
+        labeledSpinners.setSpacing(5);
+        holder.setSpacing(10);
         Scene primscene = new Scene(holder,menuSize,menuSizeTwo);
         primaryStage.setScene(primscene);//make the scene with all the stuff in it and set it to the main window
         primaryStage.show();//show the main window
@@ -104,17 +115,7 @@ public class Main extends Application
                     }//Wait a second, then if it's an even cycle of movement, move it to the right, otherwise, move it to the left
                 }
             }
-            catch(NumberFormatException e)
-            {
-                Stage ErrorStage = new Stage();
-                HBox inside = new HBox();
-                Scene ErrorScene = new Scene(inside,menuSize,menuSizeTwo);
-                Text error = new Text("There was a goof in how long you asked for, try again?");
-                inside.getChildren().add(error);
-                ErrorStage.setScene(ErrorScene);
-                ErrorStage.show();
-                //if they didn't type a number, tell them to type a number
-            } catch (AWTException ex) {
+            catch (AWTException ex) {
                 Stage ErrorStage = new Stage();
                 HBox inside = new HBox();
                 Scene ErrorScene = new Scene(inside,menuSize,menuSizeTwo);
@@ -126,7 +127,11 @@ public class Main extends Application
         }
 
 		private Integer parseInput() {
-			return seconds.getValue();
+			int numberOfSeconds = 0;
+			numberOfSeconds += seconds.getValue();
+			numberOfSeconds += minutes.getValue()*60;
+			numberOfSeconds += hours.getValue()*3600;
+			return numberOfSeconds;
 		}
     
     }
@@ -172,36 +177,6 @@ public class Main extends Application
 			}
 		}
     	
-    }
-    public void typeThings(String phrase) 
-    {
-        try
-        {
-            Robot robot = new Robot();    
-            for (int i = 0; i < phrase.length(); i++) {
-                char c = phrase.charAt(i);
-                if (Character.isUpperCase(c)) 
-                {
-                    robot.keyPress(KeyEvent.VK_SHIFT);
-                }
-                robot.keyPress(Character.toUpperCase(c));
-                robot.keyRelease(Character.toUpperCase(c));
-                if (Character.isUpperCase(c)) 
-                {
-                    robot.keyRelease(KeyEvent.VK_SHIFT);
-                }
-            }
-        }
-        catch (AWTException ex) 
-        {
-            Stage ErrorStage = new Stage();
-            HBox inside = new HBox();
-            Scene ErrorScene = new Scene(inside,menuSize,menuSizeTwo);
-            Text error = new Text("The Bot Is A N G E R");
-            inside.getChildren().add(error);
-            ErrorStage.setScene(ErrorScene);
-            ErrorStage.show();
-        }
     }
     public static void main(String[] args) {
         launch(args);
