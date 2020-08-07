@@ -52,7 +52,7 @@ public class Main extends Application
         HBox labeledSpinners = new HBox();
         VBox spinners = new VBox();
         VBox labels = new VBox();
-        Button btJiggle = new Button("Jiggle the mouse pls");//button to jiggle the mouse
+        Button btJiggle = new Button("Jiggle");//button to jiggle the mouse
         btJiggle.setOnAction(new jigglehandler());//wire the button to jiggle the mouse
         btJiggle.setAlignment(Pos.CENTER);
         spinners.getChildren().add(seconds);
@@ -86,7 +86,6 @@ public class Main extends Application
     class jigglehandler implements EventHandler<ActionEvent>
     {
 
-        @Override
         public void handle(ActionEvent event) {
             int howlongnum = 0;
             try
@@ -141,7 +140,6 @@ public class Main extends Application
     class secondsIncrementHandler implements ChangeListener<Integer>
     {
 
-		@Override
 		public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
 			if(oldValue == maximumSeconds-1 && newValue == maximumSeconds)
 			{
@@ -161,7 +159,6 @@ public class Main extends Application
     class minutesChangeHandler implements ChangeListener<Integer>
     {
 
-		@Override
 		public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
 			if(oldValue == maximumMinutes-1 && newValue == maximumMinutes)
 			{
@@ -185,7 +182,6 @@ public class Main extends Application
     class hoursChangeHandler implements ChangeListener<Integer>
     {
 
-		@Override
 		public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
 			if(oldValue == maximumHours-1 && newValue == maximumHours)
 			{
